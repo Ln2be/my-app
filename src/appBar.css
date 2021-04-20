@@ -1,0 +1,25 @@
+@font-face {
+    font-family: cairo;
+    src: url(Cairo-SemiBold.ttf);
+  }
+
+
+.file {
+    display: none;
+}
+
+.MuiAppBar-root {
+    margin-bottom: 10px;
+}
+
+.iqar {
+    font-family: cairo;
+    flex-grow: 1;
+}
+
+
+
+.MuiToolbar-gutters {
+    padding-right: 8px !important;
+    padding-left: 8px !important;
+}

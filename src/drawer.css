@@ -1,0 +1,26 @@
+.dContent {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.hideB {
+    width: fit-content;
+}
+
+.callUs {
+    margin-top: 40px !important;
+}
+
+.idForm {
+    margin-top: 10px;
+}
+
+.passForm {
+    margin-top: 10px;
+}
+
+.admin {
+    position: absolute;
+    bottom: 0;
+}

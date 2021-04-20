@@ -1,0 +1,26 @@
+img{
+    padding-top: 0;
+    margin-top: 0;
+     width: 100%;
+}
+
+.grid {
+    margin-top: 10px;
+}
+
+.center-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20vh;
+    
+}
+
+.root {
+    width: 100%;
+}
+
+body {
+    margin: 0;
+}

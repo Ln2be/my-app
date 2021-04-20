@@ -1,0 +1,103 @@
+.leaflet-container {
+	height: 80vh;
+	width: 97%;
+  }
+
+  .MuiFab-extended {
+    position: fixed !important;
+    bottom: 12px;
+    left: 10px;  
+  }
+
+  .content {
+    margin-top: 10px;
+  }
+
+  .search-div {
+    display: flex;
+    flex-direction: row;
+  }
+
+  /* .Offer */
+  .OfferRent {
+    height: 20px !important;
+    width: 20px !important;
+    background-color: rgb(210, 0, 0);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .OfferSell {
+    height: 20px !important;
+    width: 20px !important;
+    background-color: rgb(0, 0, 210);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .DemandBuy {
+    height: 20px !important;
+    width: 20px !important;
+    background-color: rgb(0, 210, 0);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .DemandRent {
+    height: 20px !important;
+    width: 20px !important;
+    background-color: rgb(210, 210, 0);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .rowf {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .OfferRentR {
+    border-bottom: 5px solid rgb(210, 0, 0);
+    /* height: 5px; */
+  }
+
+  .OfferSellR {
+    border-bottom: 5px solid rgb(0, 0, 210);
+  }
+
+  .DemandBuyR {
+    border-bottom: 5px solid rgb(0, 210, 0);
+    /* height: 5px; */
+  }
+
+  .DemandRentR {
+    border-bottom: 5px solid rgb(210, 210, 0);
+    /* height: 5px; */
+  }
+
+  .MuiDrawer-paper{
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .div-icon {
+    font-size: medium;
+  }
+
+  .map-container {
+    margin: 5px;
+    border: solid;
+  }
+  .help {
+    position: relative;
+    padding-right: 16px;
+  }
+
+  .helpIcon {
+    /* display: inline; */
+    position: absolute;
+    /* padding: 0; */
+    top: 0;
+    left: 0;
+  }
