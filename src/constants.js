@@ -613,7 +613,7 @@ export const DATA = [
   {
     type: "Feature",
     properties: {
-      name: "الخامعة اللبنانية",
+      name: "الجامعة اللبنانية",
     },
     geometry: {
       type: "Point",
@@ -915,8 +915,8 @@ export const posts1 = [
 
 export const dataf = toGeoson(posts1);
 // The apis
-export const BASE = "https://iqarnktt.com/";
-export const BASED = "http://localhost:3000/";
+export const BASE = "https://iqarnktt.com/api";
+export const BASED = "http://localhost:3000/api";
 export const ADD_ENDPOINT = "post";
 export const QUERY_ENDPOINT = "posts";
 export const NEWS_ENDPOINT = "news";

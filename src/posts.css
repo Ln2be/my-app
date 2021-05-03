@@ -6,6 +6,7 @@ img{
 
 .grid {
     margin-top: 10px;
+    background-color: rgb(211, 209, 209);
 }
 
 .center-flex {
@@ -14,7 +15,6 @@ img{
     align-items: center;
     justify-content: center;
     margin-top: 20vh;
-    
 }
 
 .root {

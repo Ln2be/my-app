@@ -1,10 +1,24 @@
 import Collapse from "@material-ui/core/Collapse";
 import { Button } from "@material-ui/core";
 import { useState } from "react";
-import "./post.css";
 import { KIND } from "./constants";
+import NumberFormat from "react-number-format";
+import ReactDOM from "react-dom";
 
-const Post = ({ post, admin, onEditClick, onDeleteClick }) => {
+import "./post.css";
+import Home from "./home";
+import { useHistory } from "react-router-dom";
+
+const Post = ({
+  post,
+  admin,
+  onEditClick,
+  onDeleteClick,
+  showRegionButton,
+}) => {
+  // routing
+  let history = useHistory();
+
   const [expanded, setExpanded] = useState();
 
   const handleDeleteClick = () => {
@@ -14,6 +28,46 @@ const Post = ({ post, admin, onEditClick, onDeleteClick }) => {
   const handleEditClick = () => {
     onEditClick(post);
   };
+
+  // handle clicking region
+  const handleRegionClick = () => {
+    const opposite = {
+      "Offer Rent": "Demand Rent",
+      "Offer Sell": "Demand Buy",
+      "Demand Rent": "Offer Rent",
+      "Demand Buy": "Offer Sell",
+    };
+    const center = [post.lat, post.lng];
+    const zoom = 16;
+    const kind = opposite[post.kind];
+
+    const location = {
+      pathname: "/",
+      state: {
+        center: center,
+        zoom: zoom,
+        kind: kind,
+      },
+    };
+
+    history.push(location);
+
+    // ReactDOM.render(
+    //   <Home center={center} zoom={zoom} kind={kind}></Home>,
+    //   document.getElementById("root")
+    // );
+  };
+
+  // show the region button
+  const regionButton = showRegionButton ? (
+    <div className="infoEl">
+      <Button variant="contained" color="secondary" onClick={handleRegionClick}>
+        المنطقة
+      </Button>
+    </div>
+  ) : null;
+
+  console.log(showRegionButton);
 
   const adminSection = admin ? (
     <div className="infoEl">
@@ -30,20 +84,12 @@ const Post = ({ post, admin, onEditClick, onDeleteClick }) => {
     setExpanded(!expanded);
   };
 
-  const AltImage = () => {
-    const file = post.kind + ".png";
-    return <img src={file} alt="house" />;
-  };
-
   return (
     <div className="post">
-      {
-        post.images && post.images.length > 0 ? (
-          // <img src={IMAGEBASE + post.images[0]} alt="house" />
-          <img src={post.images[0]} alt="house" />
-        ) : null
-        // <AltImage></AltImage>
-      }
+      {post.images && post.images.length > 0 ? (
+        // <img src={IMAGEBASE + post.images[0]} alt="house" />
+        <img src={post.images[0]} alt="house" />
+      ) : null}
       <div className="postInformation">
         <div className="infoEl">
           <div> رقم الاعلان : {post.id}</div>
@@ -51,9 +97,23 @@ const Post = ({ post, admin, onEditClick, onDeleteClick }) => {
         </div>
         <div className="text-center">{post.description}</div>
         <div className="infoEl">
-          <div>السعر : {post.price}</div>
+          <div>
+            السعر :
+            <NumberFormat
+              value={post.price}
+              displayType={"text"}
+              thousandSeparator={true}
+              // prefix={"$"}
+            />
+          </div>
           <div>للاتصال : {post.tel}</div>
         </div>
+        {regionButton}
+        {admin && (
+          <div className="infoEl">
+            <div> هاتف الزبون : {post.cTel}</div>
+          </div>
+        )}
         {adminSection}
       </div>{" "}
       {post.images && post.images.length > 1 && (

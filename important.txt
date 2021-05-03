@@ -1,0 +1,50 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-W51LS8KVKS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W51LS8KVKS');
+</script>
+
+
+https://analytics.google.com/analytics/web/#/a189979514p262616764/admin/streams/table/2327216721
+
+
+31.220.109.191
+oumelkheiri_$M1
+
+scp -r ~/workspace/my-app/build elhassen@31.220.109.191:~/html/iqarnktt
+scp  ~/workspace/node/index.js elhassen@31.220.109.191:~/nodes/iqarnktt
+
+
+
+remove the old keys if server system change
+rm /home/USERNAME/.ssh/known_hosts
+
+scp /file/to/send username@remote:/where/to/put
+
+killall -9 node
+
+if serve stop
+ rm node_modules/@angular/compiler-cli/ngcc/__ngcc_lock_file__ 
+
+
+ $ apt-get update
+$ sudo apt-get install certbot
+$ apt-get install python-certbot-nginx
+
+sudo certbot --nginx -d example.com -d www.example.com
+
+
+https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-20-04
+https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-20-04
+https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-20-04
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04
+
+https://www.digitalocean.com/community/tutorials/angular-angular-and-leaflet
+https://linuxize.com/post/chmod-command-in-linux/#:~:text=The%20chmod%20command%20allows%20you,separated%20by%20space%20as%20arguments.
+
+install certificate
+https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/

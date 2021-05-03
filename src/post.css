@@ -1,5 +1,6 @@
 img {
     width: 100%;
+    background-color: white;
 }
 
 .post {
@@ -7,6 +8,7 @@ img {
     flex-direction: column;
     /* align-items: center; */
     margin-bottom: 20px;
+    background-color: white;
 }
 
 .infoEl {

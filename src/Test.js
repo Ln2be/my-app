@@ -1,118 +1,219 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import ReactDom from "react-dom";
-import React, { Component } from "react";
-import Resizer from "react-image-file-resizer";
+import React, { useContext, createContext, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
+import AboutUs from "./about-us";
+import Auth from "./auth";
 
-export const UpImage = () => {
-  var images = [];
+import Home, { HomeR } from "./home";
+import Posts from "./posts";
+import IMenu from "./menu";
+import Add from "./add";
 
-  const resizeFile = (file) =>
-    new Promise((resolve) => {
-      Resizer.imageFileResizer(
-        file,
-        300,
-        300,
-        "JPEG",
-        100,
-        0,
-        (uri) => {
-          resolve(uri);
-        },
-        "base64"
-      );
+// This example has 3 pages: a public page, a protected
+// page, and a login screen. In order to see the protected
+// page, you must first login. Pretty standard stuff.
+//
+// First, visit the public page. Then, visit the protected
+// page. You're not yet logged in, so you are redirected
+// to the login page. After you login, you are redirected
+// back to the protected page.
+//
+// Notice the URL change each time. If you click the back
+// button at this point, would you expect to go back to the
+// login page? No! You're already logged in. Try it out,
+// and you'll see you go back to the page you visited
+// just *before* logging in, the public page.
+
+export default function AuthExample() {
+  return (
+    <ProvideAuth>
+      <Router>
+        <div>
+          {/* <AuthButton /> */}
+
+          <Switch>
+            <Route path="/about">
+              <AboutUs />
+            </Route>
+            <Route path="/news">
+              <Posts />
+            </Route>
+            <Route path="/myPosts">
+              <Posts />
+            </Route>
+            <Route path="/post">
+              <Posts />
+            </Route>
+            <Route path="/menu">
+              <IMenu />
+            </Route>
+            <Route path="/auth">
+              <Auth />
+            </Route>
+            <Route path="/add">
+              <Add />
+            </Route>
+            <Route path="/reload">
+              <HomeR />
+            </Route>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+
+          {/* <ul>
+            <li>
+              <Link to="/public">Public Page</Link>
+            </li>
+            <li>
+              <Link to="/protected">Protected Page</Link>
+            </li>
+          </ul>
+
+          <Switch>
+            <Route path="/public">
+              <PublicPage />
+            </Route>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <PrivateRoute path="/protected">
+              <ProtectedPage />
+            </PrivateRoute>
+          </Switch> */}
+        </div>
+      </Router>
+    </ProvideAuth>
+  );
+}
+
+const fakeAuth = {
+  isAuthenticated: false,
+  signin(cb) {
+    fakeAuth.isAuthenticated = true;
+    setTimeout(cb, 100); // fake async
+  },
+  signout(cb) {
+    fakeAuth.isAuthenticated = false;
+    setTimeout(cb, 100);
+  },
+};
+
+/** For more details on
+ * `authContext`, `ProvideAuth`, `useAuth` and `useProvideAuth`
+ * refer to: https://usehooks.com/useAuth/
+ */
+const authContext = createContext();
+
+function ProvideAuth({ children }) {
+  const auth = useProvideAuth();
+  return <authContext.Provider value={auth}>{children}</authContext.Provider>;
+}
+
+function useAuth() {
+  return useContext(authContext);
+}
+
+function useProvideAuth() {
+  const [user, setUser] = useState(null);
+
+  const signin = (cb) => {
+    return fakeAuth.signin(() => {
+      setUser("user");
+      cb();
     });
-
-  const handleChange = async (event) => {
-    // images = Array.from(event.target.files);
-    // console.log(images);
-
-    try {
-      const file = event.target.files[0];
-      const image = await resizeFile(file);
-      images.push(image);
-      // console.log(image);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
-  const handleSubmit = () => {
-    console.log(images);
-    var formData = new FormData();
-    images.forEach((im) => {
-      formData.append("images", im);
-    });
-
-    axios({
-      method: "post",
-      url: "http://localhost:3000/postO",
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
-    }).then((res) => {
-      const src = "http://localhost/images/" + res.data;
-      ReactDom.render(
-        <img src={src} alt="h"></img>,
-        document.getElementById("root")
-      );
+  const signout = (cb) => {
+    return fakeAuth.signout(() => {
+      setUser(null);
+      cb();
     });
   };
+
+  return {
+    user,
+    signin,
+    signout,
+  };
+}
+
+function AuthButton() {
+  let history = useHistory();
+  let auth = useAuth();
+
+  console.log(history);
+
+  return auth.user ? (
+    <p>
+      Welcome!{" "}
+      <button
+        onClick={() => {
+          auth.signout(() => history.push("/"));
+        }}
+      >
+        Sign out
+      </button>
+    </p>
+  ) : (
+    <p>You are not logged in.</p>
+  );
+}
+
+// A wrapper for <Route> that redirects to the login
+// screen if you're not yet authenticated.
+function PrivateRoute({ children, ...rest }) {
+  let auth = useAuth();
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        auth.user ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
+function PublicPage() {
+  return <h3>Public</h3>;
+}
+
+function ProtectedPage() {
+  return <h3>Protected</h3>;
+}
+
+function LoginPage() {
+  let history = useHistory();
+  let location = useLocation();
+  let auth = useAuth();
+
+  let { from } = location.state || { from: { pathname: "/" } };
+  let login = () => {
+    auth.signin(() => {
+      history.replace(from);
+    });
+  };
+
   return (
     <div>
-      <input type="file" multiple onChange={handleChange} />
-      <input type="button" value="submit" onClick={handleSubmit} />
+      <p>You must log in to view the page at {from.pathname}</p>
+      <button onClick={login}>Log in</button>
     </div>
   );
-};
-
-// export default UpImage;
-
-const App = () => {
-  // constructor(props) {
-  //   super(props);
-  //   this.fileChangedHandler = this.fileChangedHandler.bind(this);
-  //   this.state = {
-  //     newImage: "",
-  //   };
-  // }
-
-  const [newImage, setNewImage] = useState("");
-
-  const fileChangedHandler = (event) => {
-    var fileInput = false;
-    if (event.target.files[0]) {
-      fileInput = true;
-    }
-    if (fileInput) {
-      try {
-        Resizer.imageFileResizer(
-          event.target.files[0],
-          300,
-          300,
-          "JPEG",
-          100,
-          0,
-          (uri) => {
-            console.log(uri);
-            // this.setState({ newImage: uri });
-            setNewImage(uri);
-          },
-          "base64",
-          200,
-          200
-        );
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  };
-
-  return (
-    <div className="App">
-      <input type="file" onChange={fileChangedHandler} />
-      <img src={newImage} alt="" />
-    </div>
-  );
-};
-
-export default App;
+}

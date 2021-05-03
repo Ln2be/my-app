@@ -1,18 +1,16 @@
 import ReactDOM from "react-dom";
-import { AppBarPan } from "./appBar";
-import { SearchPan } from "./search";
-import Post from "./post";
-import Feed from "./feed";
-import { UpImage } from "./Test";
-import { AddPan } from "./add";
-import "./feed.css";
+import Home from "./home";
 
-ReactDOM.render(
-  <div className="root">
-    <AppBarPan home={true} />
-    <SearchPan />
-    {/* <AddPan></AddPan> */}
-    {/* <UpImage></UpImage> */}
-  </div>,
-  document.getElementById("root")
-);
+import "./posts.css";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import AboutUs from "./about-us";
+import Add from "./add";
+import { Menu } from "@material-ui/core";
+import Posts from "./posts";
+
+import AuthExample from "./Test";
+
+// ReactDOM.render(<Home />, document.getElementById("root"));
+const rootElement = document.getElementById("root");
+
+ReactDOM.render(<AuthExample />, rootElement);

@@ -1,37 +1,56 @@
 import React, { useEffect, useState } from "react";
-import IconButton from "@material-ui/core/IconButton";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import "./appBar.css";
+import "./app-bar.css";
 import axios from "axios";
 import "./add.css";
-import { BASE } from "./constants";
+import { BASE, auth } from "./constants";
 import RTL from "./RTL";
 import ReactDOM from "react-dom";
-import { AppBarPan } from "./appBar";
-import { SearchPan } from "./search";
-import Feed from "./feed";
+
+import { AppBarPan } from "./app-bar";
+import Home from "./home";
+import Posts from "./posts";
 import Switch from "@material-ui/core/Switch";
 import Resizer from "react-image-file-resizer";
 import Theme from "./theme";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import { useHistory, useLocation } from "react-router-dom";
 
 // Add Panel
-export const AddPan = ({ search, post }) => {
-  var postI = post
-    ? post
+export const AddPan = () => {
+  const location = useLocation();
+  let history = useHistory();
+
+  var postI = location.state.id
+    ? location.state
     : {
-        kind: search.kind,
-        lat: search.position.lat,
-        lng: search.position.lng,
+        kind: location.state.kind,
+        lat: location.state.lat,
+        lng: location.state.lng,
         description: "",
         tel: "",
         pass: "",
         price: "",
         images: [],
         occupied: false,
+        cTel: "",
       };
+
+  // var postI = post
+  //   ? post
+  //   : {
+  //       kind: search.kind,
+  //       lat: search.position.lat,
+  //       lng: search.position.lng,
+  //       description: "",
+  //       tel: "",
+  //       pass: "",
+  //       price: "",
+  //       images: [],
+  //       occupied: false,
+  //       cTel: "",
+  //     };
 
   const [postF, setPostF] = useState({});
   const [uploding, setUploading] = useState(false);
@@ -46,8 +65,6 @@ export const AddPan = ({ search, post }) => {
   const handleOccupiedChange = (event) => {
     setPostF({ ...postF, [event.target.name]: event.target.checked });
     setOccupied(event.target.checked);
-    console.log(event.target.checked);
-    console.log(postF.occupied);
   };
 
   function handleChange(event) {
@@ -79,7 +96,6 @@ export const AddPan = ({ search, post }) => {
         // const file = event.target.files[0];
         const image = await resizeFile(file);
         ims.push(image);
-        // console.log(image);
       } catch (err) {
         console.log(err);
       }
@@ -90,7 +106,6 @@ export const AddPan = ({ search, post }) => {
 
   function handleAddSubmit(event) {
     setUploading(true);
-    console.log(postF.images);
     var formData = new FormData();
     postF.images.forEach((im) => {
       formData.append("images", im);
@@ -104,37 +119,38 @@ export const AddPan = ({ search, post }) => {
 
     axios({
       method: "post",
-      url: BASE + "post",
+      url: BASE + "/post",
       data: formData,
       headers: { "Content-Type": "multipart/form-data" },
     }).then((response) => {
       const id = response.data.post.id;
-      ReactDOM.render(
-        <div>
-          <AppBarPan />
-          <Feed endpoint="post" query={"?id=" + id}></Feed>
-        </div>,
-        document.getElementById("root")
-      );
+
+      const location = {
+        pathname: "/post",
+        search: "&id=" + id,
+      };
+
+      history.push(location);
+      // ReactDOM.render(
+      //   <Posts endpoint="post" query={"?id=" + id} />,
+      //   document.getElementById("root")
+      // );
     });
     event.preventDefault();
   }
 
   const handleConcelSubmit = () => {
-    ReactDOM.render(
-      <div>
-        <AppBarPan home={true} />
-        <SearchPan />
-      </div>,
-      document.getElementById("root")
-    );
+    history.push("/");
+    // ReactDOM.render(<Home home={true} />, document.getElementById("root"));
   };
 
   const handleSaveSubmit = () => {
     var formData = new FormData();
-    postF.images.forEach((im) => {
-      formData.append("images", im);
-    });
+
+    if (postF.images)
+      postF.images.forEach((im) => {
+        formData.append("images", im);
+      });
 
     Object.keys(postF).forEach((key) => {
       if (key !== "images") {
@@ -144,19 +160,40 @@ export const AddPan = ({ search, post }) => {
 
     axios({
       method: "post",
-      url: BASE + "update",
+      url: BASE + "/update",
       data: formData,
       headers: { "Content-Type": "multipart/form-data" },
     }).then((response) => {
       const id = response.data.post.id;
-      ReactDOM.render(
-        <div>
-          <AppBarPan />
-          <Feed endpoint="post" query={"?id=" + id}></Feed>
-        </div>,
-        document.getElementById("root")
-      );
+
+      const location = {
+        pathname: "/post",
+        search: "&id=" + id,
+      };
+
+      history.push(location);
+
+      // ReactDOM.render(
+      //   <Posts endpoint="post" query={"?id=" + id} />,
+      //   document.getElementById("root")
+      // );
     });
+  };
+
+  // increase the font size
+  const styles = {
+    container: {
+      display: "flex",
+      flexWrap: "wrap",
+    },
+    textField: {
+      width: 300,
+      margin: 100,
+    },
+    //style for font size
+    resize: {
+      fontSize: 50,
+    },
   };
 
   return !uploding ? (
@@ -166,15 +203,20 @@ export const AddPan = ({ search, post }) => {
         <div dir="rtl" className="rootAdd">
           <form noValidate autoComplete="off">
             <div className="form-container">
-              {post ? null : <h2 className="heading">اكمل الاعلان</h2>}
+              {location.state.id ? null : (
+                <h2 className="heading">اكمل الاعلان</h2>
+              )}
               <TextField
                 type="number"
                 id="standard-basic"
-                label="مزيد من المعلومات"
+                label="التفاصيل"
                 multiline
                 onChange={handleChange}
                 name="description"
                 defaultValue={postI.description}
+                required={true}
+                inputProps={{ style: { fontSize: 20 } }} // font size of input text
+                InputLabelProps={{ style: { fontSize: 20 } }} // font size of input label
                 // Style="width:100%"
               />
               <TextField
@@ -184,7 +226,10 @@ export const AddPan = ({ search, post }) => {
                 onChange={handleChange}
                 name="price"
                 defaultValue={postI.price}
+                inputProps={{ style: { fontSize: 20 } }} // font size of input text
+                InputLabelProps={{ style: { fontSize: 20 } }} // font size of input label
               />
+
               <TextField
                 id="standard-basic"
                 label="الهاتف"
@@ -192,7 +237,22 @@ export const AddPan = ({ search, post }) => {
                 type="number"
                 name="tel"
                 defaultValue={postI.tel}
+                inputProps={{ style: { fontSize: 20 } }} // font size of input text
+                InputLabelProps={{ style: { fontSize: 20 } }} // font size of input label
               />
+
+              {auth == "22118721" && (
+                <TextField
+                  id="standard-basic"
+                  label="هاتف الزبون"
+                  onChange={handleChange}
+                  type="number"
+                  name="cTel"
+                  defaultValue={postI.cTel}
+                  inputProps={{ style: { fontSize: 20 } }} // font size of input text
+                  InputLabelProps={{ style: { fontSize: 20 } }} // font size of input label
+                />
+              )}
 
               <TextField
                 id="standard-basic"
@@ -213,29 +273,18 @@ export const AddPan = ({ search, post }) => {
                 multiple
               />
               <label htmlFor="icon-button-file" className="t-margin">
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="span"
-                  color="secondary"
-                >
-                  {postI.kind === "Offer Rent" ||
-                  postI.kind === "Offer Sell" ? (
-                    <div>
-                      <Button
-                        variant="contained"
-                        // color="secondary"
-                        component="span"
-                        helperText="5 صور على الاكثر"
-                      >
-                        اضافة صور
-                      </Button>
-                      <div className="decr">5 صور على الاكثر</div>
-                    </div>
-                  ) : null}
-
-                  {/* <PhotoCamera /> */}
-                </IconButton>
+                {postI.kind === "Offer Rent" || postI.kind === "Offer Sell" ? (
+                  <div>
+                    <Button
+                      variant="contained"
+                      // color="secondary"
+                      component="span"
+                    >
+                      اضافة صور
+                    </Button>
+                    <div className="decr">5 صور على الاكثر</div>
+                  </div>
+                ) : null}
               </label>
               {postI.kind === "Offer Rent" ? (
                 <div className="switcher">
@@ -255,7 +304,7 @@ export const AddPan = ({ search, post }) => {
                   </div>
                 </div>
               ) : null}
-              {post ? (
+              {location.state.id ? (
                 <div className="space-between">
                   <Button
                     variant="outlined"
@@ -312,30 +361,14 @@ export const AddPan = ({ search, post }) => {
   );
 };
 
-// resize the images and convert them to base64
-async function resize(file) {
-  // Create image and context
-  var image = document.createElement("img");
-  image.src = URL.createObjectURL(file);
+// add page
+const Add = () => {
+  return (
+    <div>
+      <AppBarPan />
+      <AddPan />
+    </div>
+  );
+};
 
-  var canvas = document.createElement("canvas");
-
-  var ctx = canvas.getContext("2d");
-
-  // When image is loaded draw the canvas with image resized
-
-  return await new Promise((resolve) => {
-    image.addEventListener("load", (e) => {
-      const imw = image.width;
-      const imh = image.height;
-      const nheigt = (imh / imw) * 140;
-
-      canvas.width = imw;
-      canvas.height = nheigt;
-
-      if (ctx) ctx.drawImage(image, 0, 0, imw, nheigt);
-
-      resolve(canvas.toDataURL());
-    });
-  });
-}
+export default Add;
